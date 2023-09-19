@@ -23,6 +23,32 @@ impl Database for JSONFileDatabase {
     }
 
     fn write_db(&self, db_state: &DBState) -> Result<()> {
-        todo!() // serialize db_state to json and store it in self.file_path
+        // serialize db_state to json and store it in self.file_path
+        // Serialize the DBState to JSON
+        let json_data = serde_json::to_string(db_state)?;
+
+        // Write the JSON data to the file at self.file_path
+        std::fs::write(&self.file_path, json_data)?;
+
+        Ok(())
+    }
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    mod database {
+        use std::collections::HashMap;
+        use std::io::Write;
+
+        use super::*;
+
+        #[test]
+        fn read_db_should_fail_with_invalid_path() {
+            let db = JSONFileDatabase {
+                file_path: "INVALID_PATH".to_owned(),
+            };
+            assert_eq!(db.read_db().is_err(), true);
+        }
     }
 }
