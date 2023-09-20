@@ -69,5 +69,24 @@ mod tests {
 
             assert_eq!(result.is_err(), true);
         }
+        #[test]
+        fn read_db_should_parse_json_file() {
+            let mut tmpfile = tempfile::NamedTempFile::new().unwrap();
+
+            let file_contents = r#"{ "last_item_id": 0, "epics": {}, "stories": {} }"#;
+            write!(tmpfile, "{}", file_contents).unwrap();
+
+            let db = JSONFileDatabase {
+                file_path: tmpfile
+                    .path()
+                    .to_str()
+                    .expect("failed to convert tmpfile path to str")
+                    .to_string(),
+            };
+
+            let result = db.read_db();
+
+            assert_eq!(result.is_ok(), true);
+        }
     }
 }
